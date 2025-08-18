@@ -35,28 +35,15 @@ void solve() {
         }
         return;
     }
-
-    if (n_a == n - 1) {
+    else if (n_a == n - 1) {
         cout << "Alice" << endl;
         return;
     }
-
-    if (n_b == n - 1) {
-        cout << "Bob" << endl;
-        return;
-    }
-
-    if (alice[n_a - 1] == n && (alice[n_a - 2] == n -1 || alice[0] == 1)) {
+    else if (alice[n_a - 1] == n && (alice[n_a - 2] == n -1 || alice[0] == 1)) {
         cout << "Alice" << endl;
         return;
     }
-
-    if (bob[n_b - 1] == n && n_b > 1) {
-        cout << "Bob" << endl;
-        return;
-    }
-
-    if (bob[0] == 1 && bob[n_b - 1] == n - 1) {
+    else  {
         cout << "Bob" << endl;
         return;
     }
