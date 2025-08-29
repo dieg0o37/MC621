@@ -2,7 +2,6 @@
 using namespace std;
 
 void solve() {
-    // Your code here
     int N;
     cin >> N;
     vector<int> A(N, 0);
@@ -26,12 +25,7 @@ int main () {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
 
-    // Uncomment the following lines to read from a file instead of stdin
-    /*
-    #ifndef ONLINE_JUDGE
-        freopen("P08.in", "r", stdin);
-    #endif
-    */
+    
     solve();
 
     return 0;
