@@ -1,50 +1,58 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+int L = 0, R= 0;
+void update(pair<int, int> leftp, pair<int, int> rightp) {
+    if (leftp.second < rightp.second) { 
+        R = min(R, rightp.first - 2);
+    } else if (leftp.second > rightp.second) { 
+        L = max(L, leftp.first);
+    } else {
+        return;
+    }
+}
 void solve() {
     // Your code here
     int N, M;
     cin >> N >> M;
-
-    set<pair<int, int>> min_points;
-    pair<int, int> min_point = {0, 0}, left_point, right_point, cur_point;
-    int L = 0, R = N;
-
-    cin >> min_point.first >> min_point.second;
-    min_points.insert(min_point);
+    L =0;
+    R = N;
+    set<pair<int, int>> points;
+    pair<int, int> point = {0, 0}, left_point, right_point, cur_point;
+    bool l = true, r = true;
+    cin >> point.first >> point.second;
+    points.insert(point);
     cout << L << " " <<  R << "\n";
     M--;
 
     while (M--) {
         cin >> cur_point.first >> cur_point.second;
-        if (cur_point.second == (*min_points.begin()).second) {
-            min_points.insert(cur_point);
-            cout << L << " " <<  R << "\n";
-            continue;
-        }
-        if (cur_point.first < (*min_points.begin()).first) {
-            left_point = cur_point;
-            right_point = *min_points.begin();
-        } else if (cur_point.first > (*min_points.rbegin()).first){
-            right_point = cur_point;
-            left_point = *min_points.rbegin();
+        auto it_left = points.lower_bound(cur_point);
+        auto it_right = points.upper_bound(cur_point);
+
+        // Check if left_point exists (point strictly less than cur_point)
+        if (it_left == points.begin()) {
+            l = false; // no point to the left
         } else {
-            left_point = (*min_points.lower_bound(cur_point));
-            right_point = (*min_points.upper_bound(cur_point));
-            L = max(L, left_point.first);
-            R = min(R, right_point.first - 2);
-            cout << L << " " <<  R << "\n";
-            continue;
+            --it_left;
+            left_point = *it_left;
+            l = true;
         }
-        if (right_point.second < left_point.second){
-            L = max(L, left_point.first);
+
+        // Check if right_point exists (point strictly greater than cur_point)
+        if (it_right == points.end()) {
+            r = false; // no point to the right
         } else {
-            R = min(R, right_point.first - 2);
+            right_point = *it_right;
+            r = true;
         }
-        if (cur_point.second < (*min_points.begin()).second) {
-            min_points.clear();
-            min_points.insert(cur_point);
-        }  
+        if (r) {
+            update(cur_point, right_point);
+        }   
+        if (l) {
+            update(left_point, cur_point);
+        }
+        points.insert(cur_point);
         cout << L << " " <<  R << "\n";
     }
 }
