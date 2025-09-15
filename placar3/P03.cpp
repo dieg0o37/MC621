@@ -256,10 +256,11 @@ void big_mult(bignum* n1, bignum* n2, bignum* result) {
 
 
 /// @brief Integer division of two bignums: result = n1 / n2
-void big_div(bignum* n1, bignum* n2, bignum* result) {
+void big_div(bignum* n1, bignum* n2, bignum* result, bignum* row) {
     // Check for division by zero
     if (n2->lastdigit == 0 && n2->num[0] == 0) {
-        throw std::runtime_error("Division by zero");
+        result->lastdigit += 100;
+        return;
     }
 
     result->signbit = n1->signbit * n2->signbit;
@@ -273,28 +274,56 @@ void big_div(bignum* n1, bignum* n2, bignum* result) {
         return;
     }
 
-    bignum row;
     bignum temp;
     
     result->lastdigit = n1->lastdigit;
 
     // Long division algorithm
     for (int i = n1_abs.lastdigit; i >= 0; i--) {
-        big_digit_shift(&row, 1);
-        row.num[0] = n1_abs.num[i];
-        row.zero_justify();
+        big_digit_shift(row, 1);
+        row->num[0] = n1_abs.num[i];
+        row->zero_justify();
         
         result->num[i] = 0;
-        while (big_compare(&row, &n2_abs) != -1) {
+        while (big_compare(row, &n2_abs) != -1) {
             result->num[i]++;
-            big_subtract(&row, &n2_abs, &temp);
-            row = temp;
+            big_subtract(row, &n2_abs, &temp);
+            *row = temp;
         }
     }
     result->zero_justify();
 }
 
 
-void big_karatsuba_mult(bignum* n1, bignum *n2, bignum*n3) {
-    bignum temp;
+void solve() {
+    string line;
+    while (getline(cin, line, '\n')) {
+        if (line == "0") return;
+        bignum dezessete, n, resto, res, zero;
+        string_to_bignum(line, &n);
+        ll_to_bignum(17, &dezessete);
+
+        big_div(&n, &dezessete, &res, &resto);
+        if (big_compare(&resto, &zero) == 0) {
+            cout << 1 << "\n";
+        } else {
+            cout << 0 << "\n";
+        }
+    }
+    
+
+}
+
+int main () {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    /*
+    ll t;
+    cin >> t;
+    while(t--)
+    */
+        solve();
+
+    return 0;
 }

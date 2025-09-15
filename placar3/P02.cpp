@@ -256,10 +256,11 @@ void big_mult(bignum* n1, bignum* n2, bignum* result) {
 
 
 /// @brief Integer division of two bignums: result = n1 / n2
-void big_div(bignum* n1, bignum* n2, bignum* result) {
+void big_div(bignum* n1, bignum* n2, bignum* result, bignum* row) {
     // Check for division by zero
     if (n2->lastdigit == 0 && n2->num[0] == 0) {
-        throw std::runtime_error("Division by zero");
+        result->lastdigit += 100;
+        return;
     }
 
     result->signbit = n1->signbit * n2->signbit;
@@ -273,28 +274,107 @@ void big_div(bignum* n1, bignum* n2, bignum* result) {
         return;
     }
 
-    bignum row;
     bignum temp;
     
     result->lastdigit = n1->lastdigit;
 
     // Long division algorithm
     for (int i = n1_abs.lastdigit; i >= 0; i--) {
-        big_digit_shift(&row, 1);
-        row.num[0] = n1_abs.num[i];
-        row.zero_justify();
+        big_digit_shift(row, 1);
+        row->num[0] = n1_abs.num[i];
+        row->zero_justify();
         
         result->num[i] = 0;
-        while (big_compare(&row, &n2_abs) != -1) {
+        while (big_compare(row, &n2_abs) != -1) {
             result->num[i]++;
-            big_subtract(&row, &n2_abs, &temp);
-            row = temp;
+            big_subtract(row, &n2_abs, &temp);
+            *row = temp;
         }
     }
     result->zero_justify();
 }
 
 
-void big_karatsuba_mult(bignum* n1, bignum *n2, bignum*n3) {
-    bignum temp;
+void exp_rapida(long long k, bignum* n, bignum *res) {
+    bignum base, tmp, base_t;
+    ll_to_bignum(1, res);
+    base = *n;
+    base_t = *n;
+    while (k > 0) { 
+        if (k & 1) {
+            big_mult(res, &base, &tmp);
+            *res = tmp;
+        }
+        big_mult(&base_t, &base, &tmp);
+        base = tmp;
+        base_t = base;
+        k >>= 1;
+    }
+}
+void solve() {
+    long long t, a, b;
+    string line;
+
+    while (getline(cin, line, '\n')){
+        if (line.empty()) return; 
+        
+        stringstream ss(line);
+        if (!(ss >> t >> a >> b)) return; 
+
+        cout << "(" << t << "^" << a << "-" << 1 << ")" << "/" << "(" << t << "^" << b << "-" << 1 << ") ";
+
+        // --- PRE-COMPUTATION CHECKS ---
+
+        if (t == 1) {
+            cout << "is not an integer with less than 100 digits." << "\n";
+            continue;
+        }
+
+        if (a % b != 0) {
+            cout << "is not an integer with less than 100 digits." << "\n";
+            continue;
+        }
+
+        if (a == b) {
+            cout << "1\n";
+            continue;
+        }
+
+        if ((a - b) * log10(t) > 99.0) {
+             cout << "is not an integer with less than 100 digits." << "\n";
+             continue;
+        }
+
+
+        // --- BIGNUM CALCULATION (only if necessary) ---
+        bignum t_p1, t_p2, t_base, num, den, res, resto;
+        bignum zero;
+        bignum decrement;
+        ll_to_bignum(0, &zero);
+        ll_to_bignum(-1, &decrement);
+
+        ll_to_bignum(t, &t_base);
+
+        exp_rapida(a, &t_base, &t_p1);
+        exp_rapida(b, &t_base, &t_p2);
+
+        big_add(&t_p1, &decrement, &num);
+        big_add(&t_p2, &decrement, &den);
+        
+        big_div(&num, &den, &res, &resto);
+
+        if (res.lastdigit >= 99) {
+             cout << "is not an integer with less than 100 digits." << "\n";
+        }
+        else {
+            cout << &res << "\n";
+        }
+    }
+}
+
+int main () {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    solve();
+    return 0;
 }

@@ -4,6 +4,14 @@
         "regex": "cpp",
         "chrono": "cpp",
         "span": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "complex": "cpp",
+        "valarray": "cpp",
+        "cmath": "cpp",
+        "barrier": "cpp",
+        "latch": "cpp",
+        "limits": "cpp",
+        "semaphore": "cpp",
+        "random": "cpp"
     }
 }

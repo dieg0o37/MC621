@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+// Using std namespace for clarity in this self-contained file
 using namespace std;
 
 // Using a constant for max digits is good practice
@@ -9,6 +10,17 @@ enum Sign {
     PLUS = 1,
     MINUS = -1
 };
+
+/*
+TODO from original file:
+SOMA - FIXED
+SUBTRACAO - FIXED
+MULTIPLICACAO - FIXED
+DIVISAO - FIXED
+XOR - Not implemented
+CONVERSAO DE BASE - Added string/ll conversions
+MODULO - Not implemented
+*/
 
 struct bignum {
     // --- Data Members ---
@@ -295,6 +307,24 @@ void big_div(bignum* n1, bignum* n2, bignum* result) {
 }
 
 
-void big_karatsuba_mult(bignum* n1, bignum *n2, bignum*n3) {
-    bignum temp;
+void solve() {
+    string n1, n2;
+    bignum n1_b, n2_b, res;
+    while (cin >> n1) {
+        cin >> n2;
+        string_to_bignum(n1, &n1_b);
+        string_to_bignum(n2, &n2_b);
+        big_mult(&n1_b, &n2_b, &res);
+        cout << &res << "\n";
+    }
+}
+
+int main () {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+
+        solve();
+
+    return 0;
 }

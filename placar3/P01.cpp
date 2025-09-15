@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+// Using std namespace for clarity in this self-contained file
 using namespace std;
 
 // Using a constant for max digits is good practice
@@ -9,6 +10,17 @@ enum Sign {
     PLUS = 1,
     MINUS = -1
 };
+
+/*
+TODO from original file:
+SOMA - FIXED
+SUBTRACAO - FIXED
+MULTIPLICACAO - FIXED
+DIVISAO - FIXED
+XOR - Not implemented
+CONVERSAO DE BASE - Added string/ll conversions
+MODULO - Not implemented
+*/
 
 struct bignum {
     // --- Data Members ---
@@ -253,48 +265,62 @@ void big_mult(bignum* n1, bignum* n2, bignum* result) {
 }
 
 
+void solve() {
+    string line;
+    bool first = false, sec = false, sum = false;
+    bignum max;
+    ll_to_bignum((long long)INT_MAX, &max);
+    while (getline(cin, line, '\n'))  {
+        if (line.empty()) {
+            break;
+        }
+        stringstream ss(line);
+        char op;
+        string params[2];
+        ss >> params[0];
+        ss >> op;
+        ss >> params[1];
+        cout << params[0] << " " <<  op << " " << params[1] << "\n";
+        bignum n1, n2, res;
+        string_to_bignum(params[0], &n1);
+        if (big_compare(&n1, &max) == 1) {
+            cout << "first number too big" << "\n";
+        }
+        if (op == '+') {
+            string_to_bignum(op + params[1], &n2);
+            if (big_compare(&n2, &max) == 1) {
+                cout << "second number too big" << "\n";
+            }
+            big_add(&n1, &n2, &res);
+            if (big_compare(&res, &max) == 1){
+                cout << "result too big" << "\n";
+            }
+        } else {
+            string_to_bignum(params[1], &n2);
+            if (big_compare(&n2, &max) == 1) {
+                cout << "second number too big" << "\n";
 
-
-/// @brief Integer division of two bignums: result = n1 / n2
-void big_div(bignum* n1, bignum* n2, bignum* result) {
-    // Check for division by zero
-    if (n2->lastdigit == 0 && n2->num[0] == 0) {
-        throw std::runtime_error("Division by zero");
-    }
-
-    result->signbit = n1->signbit * n2->signbit;
-    
-    // Use absolute values for the division algorithm
-    bignum n1_abs = *n1; n1_abs.signbit = PLUS;
-    bignum n2_abs = *n2; n2_abs.signbit = PLUS;
-
-    if (big_compare(&n1_abs, &n2_abs) == -1) { // |n1| < |n2| -> result is 0
-        ll_to_bignum(0, result);
-        return;
-    }
-
-    bignum row;
-    bignum temp;
-    
-    result->lastdigit = n1->lastdigit;
-
-    // Long division algorithm
-    for (int i = n1_abs.lastdigit; i >= 0; i--) {
-        big_digit_shift(&row, 1);
-        row.num[0] = n1_abs.num[i];
-        row.zero_justify();
-        
-        result->num[i] = 0;
-        while (big_compare(&row, &n2_abs) != -1) {
-            result->num[i]++;
-            big_subtract(&row, &n2_abs, &temp);
-            row = temp;
+            }
+            big_mult(&n1, &n2, &res);
+            if (big_compare(&res, &max) == 1){
+                cout << "result too big" << "\n";
+            }
         }
     }
-    result->zero_justify();
+    
+    
 }
 
+int main () {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
 
-void big_karatsuba_mult(bignum* n1, bignum *n2, bignum*n3) {
-    bignum temp;
+    /*
+    ll t;
+    cin >> t;
+    while(t--)
+    */
+        solve();
+
+    return 0;
 }
