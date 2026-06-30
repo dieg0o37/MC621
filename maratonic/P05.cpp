@@ -9,7 +9,6 @@ void print_sol(int t, vector<string> ans) {
 }
 
 void solve() {
-    // Your code here
     string init;
     cin >> init;
     vector<string> ans;

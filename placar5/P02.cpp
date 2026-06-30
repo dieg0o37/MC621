@@ -3,51 +3,40 @@ using namespace std;
 typedef long long ll;
 #define F(i, n) for(int i = 0; i < n; i++)
 #define Fr(i, n) for(int i = n; i >=0; i--)
+#define MAX (ll)1e6
 
+vector<ll> sieve(MAX + 1);
+set<ll> primos;
 
 void solve() {
-    ll X;
-    cin >> X;
-    ll p;
-    ll divs = 0;
-    if (X == 1 || X == 2 || X == 3) {
-        cout << "NO" << "\n";
+    ll n;
+    cin >> n;
+    fill(sieve.begin(), sieve.end(), 0);
+    sieve[1] = 1;
+    sieve[0] = 1;
+    for(ll i = 2; i <= MAX; i ++) {
+        if (sieve[i]) continue;
+        primos.insert(i*i);
+        for(ll j = 2*i; j <= MAX; j += i) {
+            sieve[j] = i;
+        }
     }
-
-    for (p = 2; p*p <= X; p++) {
-
-        if (X%p == 0) {
-            divs++;
-            while(X%p == 0) {
-                X /= p;
+    while (n--) {
+        ll X;
+        cin >> X;
+        if (X % 2 == 0) {
+            if (X == 4) {
+                cout << "YES" << "\n";
+            } else {
+                cout << "NO" << "\n";
             }
+            continue;
         }
-
-        if (divs > 1) {
-            cout << "NO" << "\n";
-            return;
-        }
-    }
-
-    if (divs == 1) {
-        if (X == 1) {
+        if (primos.find(X) != primos.end()) {
             cout << "YES" << "\n";
-            return;
-        } else if (X == 2 || X == 3) { 
-            cout << "NO" << "\n";
-            return;
         } else {
-            for (p = 2; p*p <= X; p++) {
-                if (X%p == 0) {
-                    cout << "NO" << "\n";
-                    return;
-                }
-            }
-            cout << "YES" << "\n";
-            return;
+            cout << "NO" << "\n";
         }
-    } else {
-        cout << "NO" << "\n";
     }
 }
 
@@ -55,11 +44,7 @@ int main () {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
 
-    
-    ll t;
-    cin >> t;
-    while(t--)
-        solve();
+    solve();
 
     return 0;
 }

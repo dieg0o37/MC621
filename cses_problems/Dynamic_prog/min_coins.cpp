@@ -3,26 +3,24 @@ using namespace std;
 typedef long long ll;
 #define F(i, n) for(int i = 0; i < n; i++)
 #define Fr(i, n) for(int i = n; i >=0; i--)
+#define MAX (ll)1e6 + 1
 
 void solve() {
-    int n, x;
+    ll n, x;
     cin >> n >> x;
-    int coins[n];
-    F(i, n) {
-        cin >> coins[i];
-    }
-    int best = INT_MAX;
-    int val[x + 1];
+    ll coins[n];
+    F(i, n) cin >> coins[i];
+    vector<ll> val(x + 1);
     val[0] = 0;
-    for (int i = 1; i <= x; i++) {
-        val[i] = INT_MAX;
-        for (auto u: coins) {
-            if (i >= u)
-                val[i] = min(val[i], val[i - u] + 1);
+    for(ll i = 1; i <= x; i++) {
+        val[i] = MAX;
+        for (auto c: coins) {
+            if (i - c >= 0)
+                val[i] = min(val[i], (val[i - c] + 1));
         }
     }
-    if (val[x] == INT_MAX) cout << -1 << "\n";
-    cout << val[x] << "\n";
+    if (val[x] == MAX) cout << -1 << "\n";
+    else cout << val[x] << "\n";
 }
 
 int main () {
